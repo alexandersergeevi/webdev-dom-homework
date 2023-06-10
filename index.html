@@ -49,7 +49,7 @@
       textComment: 'Мне нравится как оформлена эта страница! ❤',
       likeComment: false,
       likesNumber: 75,
-      colorLike: 'like-button no-active-like'
+      colorLike: 'like-button -no-active-like'
     },
   ];
 
@@ -59,7 +59,8 @@
 
     for (const like of likesButton) {
 
-      like.addEventListener("click", () => {
+      like.addEventListener("click", (event) => {
+        event.stopPropagation();
         const likeIndex = like.dataset.index;
         const commentsElement = comments[likeIndex];
 
@@ -77,13 +78,14 @@
       })
     }
   };
+
   getLikeButton();
 
   const renderComments = () => {
 
     const commentsHtml = comments.map((comment, index) => {
 
-      return `<li class="comment">
+      return `<li class="comment" data-index="${index}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.dateСomment}</div>
@@ -104,6 +106,7 @@
 
     commentsElement.innerHTML = commentsHtml;
     getLikeButton();
+    reply();
   };
 
   renderComments();
@@ -148,13 +151,22 @@
     }
 
     comments.push({
-      name: nameInputElement.value,
+      name: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       dateСomment: currentDate,
-      textComment: commentInputElement.value,
+      textComment: commentInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       likeComment: false,
       likesNumber: 0,
       colorLike: 'like-button -no-active-like'
     });
+
     renderComments();
 
     nameInputElement.value = "";
@@ -162,8 +174,49 @@
 
   });
 
+  function reply() {
+
+    let commentElements = document.querySelectorAll('.comment');
+
+    for (const commentElement of commentElements) {
+      commentElement.addEventListener("click", () => {
+        const indexComment = commentElement.dataset.index;
+
+        commentInputElement.value =
+          `> ${comments[indexComment].textComment}\n${comments[indexComment].name}, `;
+      }
+      )
+    }
+  };
+
+  reply();
+
+  const likesButton = document.querySelectorAll('.like-button');
+
+  for (const like of likesButton) {
+
+    like.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const likeIndex = like.dataset.index;
+      const commentsElement = comments[likeIndex];
+
+      if (commentsElement.likeComment) {
+        commentsElement.likesNumber -= 1;
+        commentsElement.likeComment = false;
+        commentsElement.colorLike = 'like-button -no-active-like';
+      } else {
+        commentsElement.likesNumber += 1;
+        commentsElement.likeComment = true;
+        commentsElement.colorLike = 'like-button -active-like';
+      }
+      renderComments();
+
+    })
+  }
+  ;
+
   console.log("It works!");
-  
+
 </script>
 
 </html>
