@@ -9,10 +9,12 @@
 
 <body>
   <div class="container">
+    <div id="loading-heading" class="loading-heading">Пожалуйста, подождите, комментарии загружаются...</div>
     <ul id="list" class="comments">
       <!-- Формируется в массиве JS -->
     </ul>
-    <div class="add-form">
+    <div id="loading-comment" class="loading-comment">Комментарий добавляется...</div>
+    <div id="add-form" class="add-form">
       <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
@@ -28,11 +30,12 @@
 
   const buttonElement = document.getElementById("add-button");
   const listElement = document.getElementById("list");
-
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
-
   const commentsElement = document.querySelector(".comments");
+  const formCommentElement = document.getElementById("add-form");
+  const loadingHeadingElement = document.getElementById("loading-heading");
+  const loadingCommentElement = document.getElementById("loading-comment");
 
   function formatDate(currentDate) {
 
@@ -56,29 +59,31 @@
 
   let comments = [];
 
+  loadingCommentElement.style.display = 'none';
+
   function fetchFunction() {
 
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/alexander-shm/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v1/alexander-shmygin/comments", {
       method: "GET"
-    });
-
-    fetchPromise.then((response) => {
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            dateComment: formatDate(new Date(comment.date)),
-            text: comment.text,
-            likesNumber: comment.likes,
-            colorLike: "like-button -no-active-like",
-            likeComment: false
-          }
+    })
+      .then((response) => {
+        const jsonPromise = response.json();
+        jsonPromise.then((responseData) => {
+          const appComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              dateComment: formatDate(new Date(comment.date)),
+              text: comment.text,
+              likesNumber: comment.likes,
+              colorLike: "like-button -no-active-like",
+              likeComment: false
+            }
+          });
+          comments = appComments;
+          loadingHeadingElement.style.display = 'none';
+          renderComments();
         });
-        comments = appComments;
-        renderComments();
       });
-    });
   }
 
   fetchFunction();
@@ -157,7 +162,11 @@
       return;
     }
 
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/alexander-shm/comments", {
+    buttonElement.disabled = true;
+    formCommentElement.style.display = 'none';
+    loadingCommentElement.style.display = 'flex';
+
+    fetch("https://wedev-api.sky.pro/api/v1/alexander-shmygin/comments", {
       method: "POST",
       body: JSON.stringify({
         name: nameInputElement.value
@@ -175,18 +184,21 @@
         likesNumber: 0,
         colorLike: 'like-button -no-active-like'
       })
-    });
-
-    fetchPromise.then((response) => {
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
-        fetchFunction();
+    })
+      .then((response) => {
+        return response.json();
       })
-    });
+      .then((responseData) => {
+        return fetchFunction();
+      })
+      .then((data) => {
+        buttonElement.disabled = false;
+        formCommentElement.style.display = 'flex';
+        loadingCommentElement.style.display = 'none';
+      });
 
     nameInputElement.value = "";
     commentInputElement.value = "";
-
   });
 
   function reply() {
