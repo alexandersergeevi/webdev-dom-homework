@@ -61,7 +61,7 @@
 
   loadingCommentElement.style.display = 'none';
 
-  function fetchFunction() {
+  function getFunction() {
 
     return fetch("https://wedev-api.sky.pro/api/v1/alexander-shmygin/comments", {
       method: "GET"
@@ -80,13 +80,17 @@
             }
           });
           comments = appComments;
-          loadingHeadingElement.style.display = 'none';
+          loadingHeadingElement.style.opacity = '0';
           renderComments();
         });
-      });
+      })
+      .catch((error) => {
+        alert('Кажется, у вас сломался интернет, попробуйте позже');
+        console.warn(error);
+      })
   }
 
-  fetchFunction();
+  getFunction();
 
   function getLikeButton() {
 
@@ -163,43 +167,66 @@
     }
 
     buttonElement.disabled = true;
-    formCommentElement.style.display = 'none';
+    formCommentElement.style.display = 'flex';
     loadingCommentElement.style.display = 'flex';
 
-    fetch("https://wedev-api.sky.pro/api/v1/alexander-shmygin/comments", {
-      method: "POST",
-      body: JSON.stringify({
-        name: nameInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-        dateComment: formatDate(new Date()),
-        text: commentInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-        likeComment: false,
-        likesNumber: 0,
-        colorLike: 'like-button -no-active-like'
+    function postFunction() {
+      return fetch("https://wedev-api.sky.pro/api/v1/alexander-shmygin/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+          dateComment: formatDate(new Date()),
+          text: commentInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+          likeComment: false,
+          likesNumber: 0,
+          colorLike: 'like-button -no-active-like',
+          forceError: true
+        })
       })
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((responseData) => {
-        return fetchFunction();
-      })
-      .then((data) => {
-        buttonElement.disabled = false;
-        formCommentElement.style.display = 'flex';
-        loadingCommentElement.style.display = 'none';
-      });
+        .then((response) => {
+          if (response.status === 500) {
+            throw new Error('Сервер сломался, попробуй позже');
+          } else if (response.status === 400) {
+            throw new Error('Имя и комментарий должны быть не короче 3 символов');
+          } else {
+            return response.json();
+          }
+        })
+        .then((responseData) => {
+          return getFunction();
+        })
+        .then((data) => {
+          buttonElement.disabled = false;
+          formCommentElement.style.display = 'flex';
+          loadingCommentElement.style.display = 'none';
+          nameInputElement.value = "";
+          commentInputElement.value = "";
+        })
+        .catch((error) => {
+          if (error.message === 'Сервер сломался, попробуй позже') {
+            postFunction();
+          } else if (error.message === 'Имя и комментарий должны быть не короче 3 символов') {
+            alert('Имя и комментарий должны быть не короче 3 символов');
+          } else {
+            alert('Кажется, у вас сломался интернет, попробуйте позже');
+          }
 
-    nameInputElement.value = "";
-    commentInputElement.value = "";
-  });
+          buttonElement.disabled = false;
+          formCommentElement.style.display = 'flex';
+          loadingCommentElement.style.display = 'none';
+        })
+    }
+    postFunction();
+    renderComments();
+  })
 
   function reply() {
 
