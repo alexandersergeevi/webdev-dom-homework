@@ -1,6 +1,6 @@
 import { formatDate } from "./date.js";
 import { getFunction, postFunction } from "./api.js";
-import { renderComments } from "./renderComments.js"
+import { renderComments } from "./renderComments.js";
 
 
 export const buttonElement = document.getElementById("add-button");
@@ -66,7 +66,7 @@ export function getLikeButton() {
                 commentsElement.likeComment = true;
                 commentsElement.colorLike = 'like-button -active-like';
             }
-            renderComments();
+            renderComments(comments);
 
         })
     }
@@ -102,7 +102,7 @@ getLikeButton();
 //     reply();
 // };
 
-renderComments();
+renderComments(comments);
 
 buttonElement.addEventListener("click", () => {
 
@@ -179,7 +179,7 @@ buttonElement.addEventListener("click", () => {
     //         })
     // }
     postFunction();
-    renderComments();
+    renderComments(comments);
 })
 
 export function reply() {
@@ -197,27 +197,27 @@ export function reply() {
     }
 };
 
-export const likesButton = document.querySelectorAll('.like-button');
+// export const likesButton = document.querySelectorAll('.like-button');
 
-for (const like of likesButton) {
+// for (const like of likesButton) {
 
-    like.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const likeIndex = like.dataset.index;
-        const commentsElement = comments[likeIndex];
+//     like.addEventListener("click", (event) => {
+//         event.stopPropagation();
+//         const likeIndex = like.dataset.index;
+//         const commentsElement = comments[likeIndex];
 
-        if (commentsElement.likeComment) {
-            commentsElement.likesNumber -= 1;
-            commentsElement.likeComment = false;
-            commentsElement.colorLike = 'like-button -no-active-like';
-        } else {
-            commentsElement.likesNumber += 1;
-            commentsElement.likeComment = true;
-            commentsElement.colorLike = 'like-button -active-like';
-        }
-        renderComments();
+//         if (commentsElement.likeComment) {
+//             commentsElement.likesNumber -= 1;
+//             commentsElement.likeComment = false;
+//             commentsElement.colorLike = 'like-button -no-active-like';
+//         } else {
+//             commentsElement.likesNumber += 1;
+//             commentsElement.likeComment = true;
+//             commentsElement.colorLike = 'like-button -active-like';
+//         }
+//         renderComments(comments);
 
-    })
-}
+//     })
+// }
 
 console.log("It works!");

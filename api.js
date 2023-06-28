@@ -1,5 +1,5 @@
 import { formatDate } from "./date.js";
-import { nameInputElement, commentInputElement, loadingHeadingElement, buttonElement, formCommentElement, loadingCommentElement, comments, listElement } from "./main.js";
+import { nameInputElement, commentInputElement, loadingHeadingElement, buttonElement, formCommentElement, loadingCommentElement, comments } from "./main.js";
 import { renderComments } from "./renderComments.js";
 
 export function getFunction() {
@@ -18,7 +18,7 @@ export function getFunction() {
                         likesNumber: comment.likes,
                         colorLike: "like-button -no-active-like",
                         likeComment: false
-                    }
+                    }                    
                 });
                 let comments = appComments;
                 loadingHeadingElement.style.opacity = '0';
