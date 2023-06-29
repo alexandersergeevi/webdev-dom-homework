@@ -46,7 +46,7 @@ loadingCommentElement.style.display = 'none';
 
 getFunction();
 
-export function getLikeButton() {
+export function getLikeButton(comments) {
 
     const likesButton = document.querySelectorAll('.like-button');
 
@@ -72,7 +72,7 @@ export function getLikeButton() {
     }
 };
 
-getLikeButton();
+getLikeButton(comments);
 
 // const renderComments = () => {
 
@@ -182,7 +182,7 @@ buttonElement.addEventListener("click", () => {
     renderComments(comments);
 })
 
-export function reply() {
+export function reply(comments) {
 
     let commentElements = document.querySelectorAll('.comment');
 

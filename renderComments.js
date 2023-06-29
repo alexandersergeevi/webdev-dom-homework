@@ -23,8 +23,8 @@ const renderComments = (comments) => {
     }).join("");
 
     commentsElement.innerHTML = commentsHtml;
-    getLikeButton();
-    reply();
+    getLikeButton(comments);
+    reply(comments);
 };
 
 export { renderComments };
