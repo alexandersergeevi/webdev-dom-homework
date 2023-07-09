@@ -124,6 +124,7 @@ export function rederLoginComponent({ comments, appEl, setToken, setName, getAPI
                     })
                         .then((user) => {
                             setToken(`Bearer ${user.user.token}`);
+                            setName(user.user.name);
                             getAPI();
                         })
                         .catch((error) => {
