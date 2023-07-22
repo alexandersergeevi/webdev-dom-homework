@@ -1,4 +1,8 @@
 import { loginUser, registerUser } from "../api.js";
+// import { capitalize } from 'lodash/fp';
+// import { capitalize } from 'lodash/fp';
+import _ from 'lodash';
+// import * as _ from 'lodash';
 
 export function rederLoginComponent({ comments, appEl, setToken, setName, getAPI }) {
 
@@ -120,7 +124,7 @@ export function rederLoginComponent({ comments, appEl, setToken, setName, getAPI
                     registerUser({
                         login: login,
                         password: password,
-                        name: name
+                        name: _.capitalize(name)
                     })
                         .then((user) => {
                             setToken(`Bearer ${user.user.token}`);

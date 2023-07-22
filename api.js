@@ -1,4 +1,6 @@
-import { formatDate } from "./date.js";
+// import { formatDate } from "./date.js";
+import { format } from "date-fns";
+import _ from 'lodash';
 
 const host = "https://wedev-api.sky.pro/api/v2/alexander-shmyg/comments";
 
@@ -27,7 +29,7 @@ export function postFunction(token, nameInputElement, commentInputElement) {
                 .replaceAll("<", "&lt;")
                 .replaceAll(">", "&gt;")
                 .replaceAll('"', "&quot;"),
-            dateComment: formatDate(new Date()),
+            dateComment: format(new Date(), 'yyyy-MM-dd HH.mm.ss'),
             text: commentInputElement.value
                 .replaceAll("&", "&amp;")
                 .replaceAll("<", "&lt;")
@@ -79,7 +81,7 @@ export function registerUser({ login, password, name }) {
         body: JSON.stringify({
             login,
             password,
-            name,
+            name: _.capitalize(name)
         })
     })
         .then((response) => {

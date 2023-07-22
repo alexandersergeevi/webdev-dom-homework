@@ -2,6 +2,7 @@ import { formatDate } from "./date.js";
 import { getFunction } from "./api.js";
 import { renderApp } from "./renderComments.js";
 import { getListComments } from "./listComments.js";
+import { format } from "date-fns";
 
 const loadingHeadingElement = document.querySelector('.loading-heading');
 
@@ -14,7 +15,7 @@ export function getAPI() {
           return {
             id: comment.id,
             name: comment.author.name,
-            dateComment: formatDate(new Date(comment.date)),
+            dateComment: format(new Date(comment.date),  'yyyy-MM-dd HH.mm.ss'),
             text: comment.text,
             likeComment: comment.isLiked,
             likesNumber: comment.likes,
